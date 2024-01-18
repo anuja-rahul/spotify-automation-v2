@@ -122,4 +122,4 @@ class SpotifyHandler:
             # return json_result
 
         else:
-            return None
+            raise Exception("No artist id found !")
