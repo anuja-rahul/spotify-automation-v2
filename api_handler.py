@@ -34,7 +34,8 @@ class SpotifyHandler:
 
 
         Public:
-
+            search_for_artist : search for artists id using given artist name
+            get_songs_by_artist : gets a list of top songs by the given artist
 
 
 
