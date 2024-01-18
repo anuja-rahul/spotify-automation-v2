@@ -5,4 +5,6 @@ Allows you to access and retrieve information using spotify api
 """
 from api_handler import SpotifyHandler
 
-SpotifyHandler()
+handle = SpotifyHandler()
+handle.search_for_artist(artist_name="Good Kid")
+handle.get_songs_by_artist()
