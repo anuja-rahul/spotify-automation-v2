@@ -30,6 +30,7 @@ class SpotifyHandler:
 
         Private:
             __get_token : requests temporary access tokens from spotify api
+            __get_auth_header : returns an authorization header
 
 
         Public:
@@ -49,7 +50,10 @@ class SpotifyHandler:
     artist_url = "https://api.spotify.com/v1/artists/"
 
     def __init__(self):
-        self.__get_token()
+        """Creates a new instance of the SpotifyHandler class"""
+        self.__token = self.__get_token()
+        self.__auth_header = SpotifyHandler.__get_auth_header(token=self.__token)
+        self.__artist_id = None
 
     @classmethod
     @DataLogger.logger
@@ -71,3 +75,50 @@ class SpotifyHandler:
         results = post(SpotifyHandler.token_url, headers=headers, data=data)
         json_result = json.loads(results.content)
         return json_result["access_token"]
+
+    @staticmethod
+    @DataLogger.logger
+    def __get_auth_header(token: str) -> dict[str:str]:
+        """
+        returns an authorization header
+        :param token: token to access spotify api
+        :return: authorization header
+        """
+        return {"Authorization": "Bearer " + token}
+
+    @DataLogger.logger
+    def search_for_artist(self, artist_name: str) -> None:
+        """
+        Search for an artist id using a given artist name
+        :param artist_name: str: name of the artist
+        :return: str: id of the artist
+        """
+        query = f"?q={artist_name}&type=artist&limit=1"
+        query_url = SpotifyHandler.search_url + query
+        results = get(query_url, headers=self.__auth_header)
+        json_result = json.loads(results.content)
+        if len(json_result["artists"]["items"]) == 0:
+            print("No such artist !")
+            return None
+        else:
+            self.__artist_id = json_result["artists"]["items"][0]["id"]
+
+    @DataLogger.logger
+    def get_songs_by_artist(self) -> any:
+        """
+        Gets a list of songs by the specified artist
+        :return: dictionary of songs information
+        """
+        if self.__artist_id is not None:
+            url = f"{SpotifyHandler.artist_url}{self.__artist_id}/top-tracks?country=US"
+            results = get(url, headers=self.__auth_header)
+            json_result = json.loads(results.content)
+
+            tracks = json_result["tracks"]
+            for idx, song in enumerate(tracks):
+                print(f"{(idx + 1)}. {song['name']}")
+
+            # return json_result
+
+        else:
+            return None
