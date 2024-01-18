@@ -29,7 +29,7 @@ class SpotifyHandler:
     -------
 
         Private:
-
+            __get_token : requests temporary access tokens from spotify api
 
 
         Public:
