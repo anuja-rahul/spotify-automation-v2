@@ -7,4 +7,4 @@ from api_handler import SpotifyHandler
 
 handle = SpotifyHandler()
 handle.search_for_artist(artist_name="Good Kid")
-handle.get_songs_by_artist()
+handle.get_top_songs_by_artist()
