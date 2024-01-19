@@ -49,6 +49,7 @@ class SpotifyHandler:
     token_url = "https://accounts.spotify.com/api/token"
     search_url = "https://api.spotify.com/v1/search"
     artist_url = "https://api.spotify.com/v1/artists/"
+    track_url = "https://api.spotify.com/v1/tracks/"
 
     def __init__(self):
         """Creates a new instance of the SpotifyHandler class"""
@@ -105,7 +106,7 @@ class SpotifyHandler:
             self.__artist_id = json_result["artists"]["items"][0]["id"]
 
     @DataLogger.logger
-    def get_songs_by_artist(self) -> any:
+    def get_top_songs_by_artist(self) -> any:
         """
         Gets a list of songs by the specified artist
         :return: dictionary of songs information
@@ -115,11 +116,12 @@ class SpotifyHandler:
             results = get(url, headers=self.__auth_header)
             json_result = json.loads(results.content)
 
-            tracks = json_result["tracks"]
-            for idx, song in enumerate(tracks):
-                print(f"{(idx + 1)}. {song['name']}")
-
-            # return json_result
+            if json_result is not None:
+                tracks = json_result["tracks"]
+                for idx, song in enumerate(tracks):
+                    print(f"{(idx + 1)}. {song['name']}")
+            else:
+                return None
 
         else:
             raise Exception("No artist id found !")
